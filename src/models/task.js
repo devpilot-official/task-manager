@@ -1,14 +1,21 @@
+const { ObjectID } = require("mongodb")
 const mongoose = require("mongoose")
 
 const Task = mongoose.model('Tasks', {
-    description: {
+    userID: {
+        type: ObjectID,
+        required: true,
+        ref: 'User',
+        trim: true
+    },
+    task: {
         type: String,
         required: true,
         trim: true
     },
-    completed: {
-        type: Boolean,
-        default: false
+    state: {
+        type: String,
+        required: true
     }
 })
 

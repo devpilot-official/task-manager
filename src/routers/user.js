@@ -17,10 +17,10 @@ routes.post('/users', async (req, res) => {
 routes.get('/users', async (req, res) => {
 
     try {
-        const users = await User.find({})
-        res.status(201).send(users)
+        const users = await User.find({}, '-__v').exec();
+        res.status(200).send(users);
     } catch (e) {
-        res.status(500).send()
+        res.status(500).send();
     }
 })
 
@@ -41,7 +41,7 @@ routes.get('/users/:id', async (req, res) => {
 
 routes.patch('/users/:id', async (req, res) => {
     const updatesField = Object.keys(req.body)
-    const allowedFields = ['name', 'email', 'password', 'age']
+    const allowedFields = ['firstName', 'lastName']
     const _id = req.params.id
 
     const isValidField = updatesField.every((field) => {

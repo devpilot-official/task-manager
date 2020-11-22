@@ -17,10 +17,20 @@ routes.post('/tasks', async (req, res) => {
 routes.get('/tasks', async (req, res) => {
 
     try {
-        const tasks = await Task.find({})
+        const tasks = await Task.find({}).exec();
         res.send(tasks)
     } catch (e) {
         res.status(500).send()
+    }
+})
+
+routes.get('/tasks/me/:user_id', async (req, res) => {
+
+    try {
+        const tasks = await Task.find({ userID: req.params.user_id }).populate('userID').exec();
+        res.status(200).send(tasks)
+    } catch (e) {
+        res.status(500).send(e)
     }
 })
 
@@ -41,7 +51,32 @@ routes.get('/tasks/:id', async (req, res) => {
 
 routes.patch('/tasks/:id', async (req, res) => {
     const updateFields = Object.keys(req.body)
-    const allowedFields = ['description', 'completed']
+    const allowedFields = ['state']
+    const _id = req.params.id
+
+    const isValidField = updateFields.every((field) => {
+        return allowedFields.includes(field)
+    })
+
+    if (!isValidField) {
+        return res.status(400).send({error: 'this is an invalid field'})
+    }
+
+    try {
+        const updated = await Task.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
+        if (!updated) {
+            return res.status(404).send()
+        }
+
+        res.status(200).send(updated)
+    } catch (e) {
+        res.status(400).send()
+    }
+})
+
+routes.patch('/tasks/detail/:id', async (req, res) => {
+    const updateFields = Object.keys(req.body)
+    const allowedFields = ['task']
     const _id = req.params.id
 
     const isValidField = updateFields.every((field) => {
