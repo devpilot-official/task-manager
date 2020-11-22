@@ -1,7 +1,12 @@
+const dotenv = require('dotenv')
 const mongoose = require("mongoose")
 
-mongoose.connect('mongodb://127.0.0.1:27017/task-manager', {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
+dotenv.config();
+
+mongoose.connect(process.env.mongo_url, {
+      keepAlive: true,
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
 })
